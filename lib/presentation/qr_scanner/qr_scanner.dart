@@ -11,19 +11,19 @@ class QrScanner extends StatefulWidget {
 }
 
 class QrScannerState extends State<QrScanner> {
-  MobileScannerController cameraController = MobileScannerController();
+  MobileScannerController cameraController =
+      MobileScannerController(detectionSpeed: DetectionSpeed.noDuplicates);
 
   @override
   Widget build(BuildContext context) {
     return Consumer<CartState>(
       builder: (_, state, __) => Scaffold(
         body: MobileScanner(
-            allowDuplicates: false,
             controller: cameraController,
-            onDetect: (barcode, args) {
-              if (barcode.rawValue != null) {
-                final String code = barcode.rawValue!;
-                state.updateDiscount(code);
+            onDetect: (barcode) {
+              if (barcode.barcodes.first.rawValue != null) {
+                final String code = barcode.barcodes.first.rawValue!;
+                state.updateDiscount(code);                        
                 Navigator.of(context).pop();
               }
             }),
