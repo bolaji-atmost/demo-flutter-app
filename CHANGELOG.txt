@@ -1,0 +1,17 @@
+## 1.0.1 - 2024-10-10
+### Added
+- Integrated Jenkins pipeline for automated testing and deployment.
+- Docker environment updated to include Flutter and Android SDK setup.
+
+### Changed
+- Build process streamlined to use Flutter commands.
+- Updated dependencies for Android API level 29.
+
+### Fixed
+- Resolved Gradle dependency issues during build.
+- Fixed issue with APK not being signed correctly during release.
+
+## 1.0.0 - 2024-09-25
+### Added
+- Initial release of the Flutter application.
+- Basic CI/CD pipeline for testing and deployment.
