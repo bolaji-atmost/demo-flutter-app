@@ -1,10 +1,5 @@
 FROM mobiledevops/android-sdk-image:33.0.2
 
-# Create a group and add both users to it
-RUN groupadd fluttergroup \
-    && usermod -aG fluttergroup mobiledevops \
-    && usermod -aG fluttergroup atmost
-
 ENV FLUTTER_VERSION="3.24.3"
 ENV CHANNEL="stable"
 ENV FLUTTER_HOME="/home/mobiledevops/.flutter-sdk"
@@ -17,16 +12,15 @@ RUN mkdir -p $FLUTTER_HOME \
     && tar xf flutter_linux_${FLUTTER_VERSION}-${CHANNEL}.tar.xz --strip-components=1 \
     && rm flutter_linux_${FLUTTER_VERSION}-${CHANNEL}.tar.xz
 
-# Set the group ownership and permissions
-RUN chown -R mobiledevops:fluttergroup $FLUTTER_HOME \
-    && chmod -R 775 $FLUTTER_HOME
+# Change ownership and permissions for access by atmost user
+RUN chown -R mobiledevops:mobiledevops $FLUTTER_HOME \
+    && chmod -R 755 $FLUTTER_HOME
 
 # Precache Flutter SDK
 RUN flutter precache
 
-# Switch back to atmost user for Jenkins agent to run
+# Switch back to the atmost user for Jenkins agent to run
 USER atmost
-
 
 
 
