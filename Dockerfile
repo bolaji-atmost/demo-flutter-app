@@ -1,18 +1,50 @@
 FROM mobiledevops/android-sdk-image:33.0.2
 
+# Create a group and add both users to it
+RUN groupadd fluttergroup \
+    && usermod -aG fluttergroup mobiledevops \
+    && usermod -aG fluttergroup atmost
+
 ENV FLUTTER_VERSION="3.24.3"
 ENV CHANNEL="stable"
-ENV FLUTTER_HOME "/home/mobiledevops/.flutter-sdk"
-ENV PATH $PATH:$FLUTTER_HOME/bin
+ENV FLUTTER_HOME="/home/mobiledevops/.flutter-sdk"
+ENV PATH=$PATH:$FLUTTER_HOME/bin
 
 # Download and extract Flutter SDK
-RUN mkdir $FLUTTER_HOME \
+RUN mkdir -p $FLUTTER_HOME \
     && cd $FLUTTER_HOME \
     && curl --fail --remote-time --silent --location -O https://storage.googleapis.com/flutter_infra_release/releases/${CHANNEL}/linux/flutter_linux_${FLUTTER_VERSION}-${CHANNEL}.tar.xz \
     && tar xf flutter_linux_${FLUTTER_VERSION}-${CHANNEL}.tar.xz --strip-components=1 \
     && rm flutter_linux_${FLUTTER_VERSION}-${CHANNEL}.tar.xz
 
+# Set the group ownership and permissions
+RUN chown -R mobiledevops:fluttergroup $FLUTTER_HOME \
+    && chmod -R 775 $FLUTTER_HOME
+
+# Precache Flutter SDK
 RUN flutter precache
+
+# Switch back to atmost user for Jenkins agent to run
+USER atmost
+
+
+
+
+# FROM mobiledevops/android-sdk-image:33.0.2
+
+# ENV FLUTTER_VERSION="3.24.3"
+# ENV CHANNEL="stable"
+# ENV FLUTTER_HOME "/home/mobiledevops/.flutter-sdk"
+# ENV PATH $PATH:$FLUTTER_HOME/bin
+
+# # Download and extract Flutter SDK
+# RUN mkdir $FLUTTER_HOME \
+#     && cd $FLUTTER_HOME \
+#     && curl --fail --remote-time --silent --location -O https://storage.googleapis.com/flutter_infra_release/releases/${CHANNEL}/linux/flutter_linux_${FLUTTER_VERSION}-${CHANNEL}.tar.xz \
+#     && tar xf flutter_linux_${FLUTTER_VERSION}-${CHANNEL}.tar.xz --strip-components=1 \
+#     && rm flutter_linux_${FLUTTER_VERSION}-${CHANNEL}.tar.xz
+
+# RUN flutter precache
 
 
 
