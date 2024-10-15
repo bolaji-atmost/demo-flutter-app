@@ -20,20 +20,28 @@ pipeline {
                 }
             }
             steps {
-                // Set Java 17 as the correct version
                 sh 'git config --global --add safe.directory /home/mobiledevops/.flutter-sdk'
+                
+                // Install Java 17
+                sh '''
+                    apt-get update && apt-get install -y openjdk-17-jdk
+                    update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+                    update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac
+                '''
+                
                 sh 'export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64'
                 sh 'flutter upgrade'
                 sh 'flutter pub get'
                 sh 'flutter --version'
                 sh 'java -version'
+                
                 dir('/home/atmost/agent-002/workspace/njem-appci') {
                     sh 'flutter pub get'
                     sh '''
                         sed -i 's/distributionUrl=.*/distributionUrl=https\\:\\/\\/services.gradle.org\\/distributions\\/gradle-8.3-all.zip/' android/gradle/wrapper/gradle-wrapper.properties
                     '''
                     sh '''
-                        echo org.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64 >> android/gradle.properties
+                        echo "org.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64" >> android/gradle.properties
                     '''
                     sh 'flutter build apk --debug'
                 }
@@ -54,7 +62,6 @@ pipeline {
         }
     }
 }
-
 
 
 // pipeline {
