@@ -93,7 +93,16 @@ pipeline {
         //         }
         //     }
         // }
-        
+
+        stage('Clean up Docker resources') {
+            steps {
+                script {
+                    echo "Pruning unused Docker resources..."
+                    // Prune unused Docker resources
+                    sh 'docker system prune -f'
+                }
+            }
+        }
         // Checkout the latest code from the repository
         stage('Checkout') {
             steps {
