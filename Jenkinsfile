@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     options {
-        timeout(time: 15, unit: 'MINUTES')
+        timeout(time: 30, unit: 'MINUTES')
     }
 
     stages {
@@ -23,15 +23,12 @@ pipeline {
                 }
             }
             steps {
-                sh 'echo "Current directory: $PWD"'
-                sh 'ls -la'
-                sh 'which flutter || echo "Flutter not found in PATH"'
-                sh 'echo $PATH'
-                sh 'flutter --version || echo "Flutter command not found"'
-                dir('android') {
-                    sh 'echo "Android directory: $PWD"'
-                    sh 'ls -la'
-                    sh 'flutter build apk || echo "Flutter build failed"'
+                sh 'git config --global --add safe.directory /home/mobiledevops/.flutter-sdk'
+                sh 'flutter upgrade'
+                sh 'flutter --version'
+                dir('/home/atmost/agent-002/workspace/njem-appci') {
+                    sh 'flutter pub get'
+                    sh 'flutter build apk --debug'
                 }
             }
         }
@@ -39,7 +36,7 @@ pipeline {
 
     post {
         success {
-            archiveArtifacts artifacts: 'build/app/outputs/flutter-apk/*.apk', fingerprint: true
+            archiveArtifacts artifacts: '**/build/app/outputs/flutter-apk/app-debug.apk', fingerprint: true
         }
         failure {
             echo 'The Pipeline failed :('
