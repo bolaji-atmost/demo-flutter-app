@@ -45,6 +45,7 @@ pipeline {
             echo 'The Pipeline failed :('
             sh 'docker ps -a'
             sh 'docker logs $(docker ps -aq | head -n 1)'
+            sh 'docker system prune -f'
         }
     }
 }
