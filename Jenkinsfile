@@ -20,8 +20,11 @@ pipeline {
                 }
             }
             steps {
+                // Set Java 17 as the correct version
                 sh 'git config --global --add safe.directory /home/mobiledevops/.flutter-sdk'
-                sh 'flutter upgrade'
+                sh 'export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64'
+                // sh 'flutter upgrade'
+                sh 'flutter pub get'
                 sh 'flutter --version'
                 sh 'java -version'
                 dir('/home/atmost/agent-002/workspace/njem-appci') {
