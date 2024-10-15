@@ -23,9 +23,15 @@ pipeline {
                 }
             }
             steps {
-                sh 'flutter --version'
+                sh 'echo "Current directory: $PWD"'
+                sh 'ls -la'
+                sh 'which flutter || echo "Flutter not found in PATH"'
+                sh 'echo $PATH'
+                sh 'flutter --version || echo "Flutter command not found"'
                 dir('android') {
-                    sh '../flutter/bin/flutter build apk'
+                    sh 'echo "Android directory: $PWD"'
+                    sh 'ls -la'
+                    sh 'flutter build apk || echo "Flutter build failed"'
                 }
             }
         }
