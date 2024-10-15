@@ -1,38 +1,36 @@
 FROM mobiledevops/android-sdk-image:33.0.2
 
-# Define variables
+# Set environment variables
 ENV FLUTTER_VERSION="3.24.3"
 ENV CHANNEL="stable"
-ENV FLUTTER_HOME="/home/atmost/.flutter-sdk"
+ENV FLUTTER_HOME="/home/mobiledevops/.flutter-sdk"
 ENV PATH=$PATH:$FLUTTER_HOME/bin
+
+# Ensure we are running as root to modify system files
+USER root
 
 # Create the 'atmost' user with UID:GID matching the Jenkins agent
 RUN groupadd -g 1002 atmost \
     && useradd -m -u 1001 -g 1002 atmost
 
-# Switch to 'atmost' user for the rest of the Dockerfile
-USER atmost
-
-# Create Flutter SDK directory
-RUN mkdir -p $FLUTTER_HOME
-
 # Download and extract Flutter SDK
-RUN cd $FLUTTER_HOME \
+RUN mkdir -p $FLUTTER_HOME \
+    && cd $FLUTTER_HOME \
     && curl --fail --remote-time --silent --location -O https://storage.googleapis.com/flutter_infra_release/releases/${CHANNEL}/linux/flutter_linux_${FLUTTER_VERSION}-${CHANNEL}.tar.xz \
     && tar xf flutter_linux_${FLUTTER_VERSION}-${CHANNEL}.tar.xz --strip-components=1 \
     && rm flutter_linux_${FLUTTER_VERSION}-${CHANNEL}.tar.xz
 
-# Precache Flutter SDK
+# Change ownership and permissions for access by the 'atmost' user
+RUN chown -R atmost:atmost $FLUTTER_HOME \
+    && chmod -R 755 $FLUTTER_HOME
+
+# Precache Flutter SDK as the 'atmost' user
+USER atmost
 RUN flutter precache
 
-# Configure Git to recognize the Flutter SDK directory as safe
-RUN git config --global --add safe.directory $FLUTTER_HOME
+# Set the working directory for the Jenkins agent
+WORKDIR /home/atmost
 
-# Set working directory
-WORKDIR /home/atmost/app
+# End with the command to keep the container running
+CMD ["bash"]
 
-# Ensure the PATH is updated
-ENV PATH="$PATH:$FLUTTER_HOME/bin"
-
-# Set the default command
-CMD ["/bin/bash"]
