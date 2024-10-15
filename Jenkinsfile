@@ -43,11 +43,16 @@ def isDeployCandidate() {
 }
 
 pipeline {
-    agent { 
-        dockerfile {
-            filename 'Dockerfile' 
+    agent {
+        docker {
+            image 'mobiledevops/flutter-sdk-image:3.16.3'
         }
     }
+    // agent { 
+    //     dockerfile {
+    //         filename 'Dockerfile' 
+    //     }
+    // }
     // agent any
     // agent { dockerfile true }
     environment {
