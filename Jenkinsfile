@@ -107,7 +107,13 @@ pipeline {
                 sh 'ls -la' // Check files after checkout
             }
         }
-        
+
+        stage('Setup Git Safe Directory') {
+            steps {
+                sh 'git config --global --add safe.directory /home/mobiledevops/.flutter-sdk'
+            }
+        }
+
         
         stage('BUILD') {
             steps {
