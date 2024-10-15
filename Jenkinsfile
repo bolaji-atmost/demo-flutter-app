@@ -30,7 +30,7 @@ pipeline {
                         sed -i 's/distributionUrl=.*/distributionUrl=https\\:\\/\\/services.gradle.org\\/distributions\\/gradle-8.3-all.zip/' android/gradle/wrapper/gradle-wrapper.properties
                     '''
                     sh '''
-                        echo "org.gradle.java.home=/path/to/java/17" >> android/gradle.properties
+                        echo org.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64 >> android/gradle.properties
                     '''
                     sh 'flutter build apk --debug'
                 }
