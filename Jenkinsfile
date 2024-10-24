@@ -7,7 +7,6 @@ pipeline {
         stage('Prepare') {
             steps {
                 sh 'docker version'
-                sh 'docker info'
                 sh 'docker pull mobiledevops/flutter-sdk-image:3.16.3'
             }
         }
@@ -35,7 +34,7 @@ pipeline {
                 sh 'flutter --version'
                 sh 'java -version'
                 
-                dir('/home/atmost/agent-002/workspace/njem-appci') {
+                dir('${WORKSPACE}') {
                     sh 'flutter pub get'
                     sh '''
                         sed -i 's/distributionUrl=.*/distributionUrl=https\\:\\/\\/services.gradle.org\\/distributions\\/gradle-8.3-all.zip/' android/gradle/wrapper/gradle-wrapper.properties
